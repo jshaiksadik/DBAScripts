@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  vars:
+   myname: jafarsadik
+  gather_facts: true
+  tasks:
+   - ansible.builtin.debug:
+      msg: 
+       - "this is testing: {{myname}}"
