@@ -1,0 +1,22 @@
+param (
+  
+     [Parameter(Mandatory=$true)]
+     [string]$server
+         
+)
+
+$SERVER=$server
+
+function getSQLInstanceOnServer ([string]$SERVER) {
+    $services = Get-Service -Computer $SERVER
+    $services = $services | ? DisplayName -like "SQL Server (*)"
+        try {
+        $instances = $services.Name | ForEach-Object {($_).Replace("MSSQL`$","")}
+    }catch{
+        # if no instances are found return 
+        return -1
+    }
+    return $instances
+}
+
+getSQLInstanceOnServer $SERVER
