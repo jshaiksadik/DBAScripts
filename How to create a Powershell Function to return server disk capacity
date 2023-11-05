@@ -1,0 +1,19 @@
+ Is there an efficient way to return the aggregate of the various drives on a Windows OS using Powershell? Instead of returning individual drives , I need to a total capacity .
+
+Answer:This Powershell function accepts an input parameter of a server name. The script uses Get-Wmiobject method, to iterate though every disk – note: I have it filtered at DriveType=3 – you can change this to your specifications.
+
+The script aggregates the disks and uses the $TotalCapacity variable, to return to the calling process. There is an example code to call the function.
+
+Function GetAggDiskCapacity([string]$server)
+{
+$computer = $server
+$disks = @(Get-WmiObject Win32_LogicalDisk -ComputerName $computer -Filter 'DriveType = 3')
+ $TotalCapacity = 0
+$disks | ForEach { $TotalCapacity += $_.Size }
+return $TotalCapacity 
+    
+}
+##example
+
+##GetAggDiskCapacity myservername45
+
