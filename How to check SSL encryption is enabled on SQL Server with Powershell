@@ -1,0 +1,20 @@
+Method 1 : Use WMI , through Powershell 
+
+foreach ( $item in ( gwmi -ns 'root\Microsoft\SqlServer' __NAMESPACE | ? {$_.name -match 'ComputerManagement' } | select name ) )
+{
+   $namespace = "root\Microsoft\SqlServer\$($item.name)"
+   $winmi = Get-WmiObject -Namespace $namespace -Class "ServerSettingsGeneralFlag" | where{$_.FlagName -eq "ForceEncryption" }
+   foreach ($setting in $winmi)
+   {
+      Write-Output "Host Server: $($winmi.__SERVER), SQL Server Instance: $($winmi.InstanceName), $($winmi.FlagName): $($winmi.FlagValue)"
+   }
+}
+
+
+Method 2 : Use t-sql to establish if a SQL Server Instance has SSL enabled 
+
+DECLARE @EncryptionForced INT
+
+EXEC xp_instance_regread 'HKEY_LOCAL_MACHINE', 'Software\Microsoft\Microsoft SQL Server\MSSQLServer\SuperSocketNetLib', 'ForceEncryption', @EncryptionForced OUTPUT
+
+SELECT CASE WHEN @EncryptionForced = 1 THEN 'Encryption Forced = Yes ' ELSE 'Encryption Forced = No' END
