@@ -1,0 +1,36 @@
+I'm trying to send an email with multiple recipients in Powershell, and getting an exception  error message:
+
+Exception calling "Add" with "1" argument(s): "An invalid character was found in the mail header: ';'."
+
+When I revert to send the email to one recipient - the email is successfull . What is the correct way to pass multiple recipients for powershell email.
+
+Some more information that may assist in troubleshooting.
+
+1) When I hardcode the email addresses in the Powershell code  e.g $emailTo = "user1@org.com,user2@org.com"  it works ok . 
+
+2)When I attempt to pass the values in as input parameters the errors are generated. 
+
+param (
+[Parameter(Mandatory=$true)]
+[string]$emailTo
+)
+
+$emailTo = "$emailTo"
+
+An example of how I'm executing the script:
+
+.\SQL_Server_Audit.ps1  -emailTo "user1@org.com;user2@org.com"   
+
+ 
+
+Answer: Looking at the code examples you've posted, there are 2 separate issues. 
+
+Issue 1 : the email separator. You've reported the message - Exception calling "Add" with "1" argument(s): "An invalid character was found in the mail header: ';'."
+
+If you change the separator to "," it will work
+
+issue 2 :   You're passing the multiple recipients   with doubles quotes  ""   , but this will throw an error. Change the double quotes to single quotes '' , and the issue will be fixed
+
+In summary , when calling the powershell file it should be:
+
+.\SQL_Server_Audit.ps1  -emailTo 'user1@org.com,user2@org.com'  
