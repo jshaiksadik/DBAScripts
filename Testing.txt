@@ -39,3 +39,13 @@ FROM sys.master_files mf
 CROSS APPLY sys.dm_os_volume_stats(mf.database_id, mf.FILE_ID) dovs
 ORDER BY FreeSpaceInMB ASC
 GO
+
+
+SELECT d.name dbname, d.state_desc, d.user_access_desc, m.name logical_name, m.physical_name, 
+(m.size*8.0)/1024/1024 Size_GBs, 
+sum(m.size*8.0) OVER (partition BY 1)/1024/1024 Ttl_Size_GBs
+FROM sys.databases d
+INNER JOIN sys.master_files m
+ON m.database_id = d.database_id
+WHERE d.name = '<DBNameHere>'
+ORDER BY Size_GBs desc
