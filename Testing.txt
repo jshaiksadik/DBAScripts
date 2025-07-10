@@ -49,3 +49,6 @@ INNER JOIN sys.master_files m
 ON m.database_id = d.database_id
 WHERE d.name = '<DBNameHere>'
 ORDER BY Size_GBs desc
+
+all scripts are useful
+
